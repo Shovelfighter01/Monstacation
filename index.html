@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Travel List ✈️</title>
+<title>Monstacation ✈️</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;height:100vh;overflow:hidden;background:#F9FAFB;color:#111827}
 
-/* ── AUTH ─────────────────────────────────────── */
+/* ── AUTH ─────────────────────────────── */
 #auth-screen{display:flex;align-items:center;justify-content:center;height:100vh;background:linear-gradient(135deg,#1a3a5c 0%,#2d5a3d 100%)}
 .auth-card{background:#fff;border-radius:16px;padding:32px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 .auth-brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}
@@ -21,20 +21,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;height:1
 .tab.on{background:#111;color:#fff}
 .afield{margin-bottom:14px}
 .afield label{display:block;font-size:12px;font-weight:500;color:#374151;margin-bottom:5px}
-.afield input{width:100%;padding:9px 11px;border:1px solid #D1D5DB;border-radius:8px;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s}
+.afield input{width:100%;padding:9px 11px;border:1px solid #D1D5DB;border-radius:8px;font-size:14px;font-family:inherit;outline:none}
 .afield input:focus{border-color:#3B82F6;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
 .auth-btn{width:100%;padding:10px;background:#3B82F6;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
 .auth-btn:hover{background:#2563EB}
 .auth-btn:disabled{opacity:.55;cursor:not-allowed}
 .auth-msg{font-size:12px;margin-top:10px;min-height:16px}
 
-/* ── APP SHELL ─────────────────────────────────── */
+/* ── APP SHELL ────────────────────────── */
 #app-screen{display:none;flex-direction:column;height:100vh}
 header{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;background:#fff;border-bottom:1px solid #E5E7EB;flex-shrink:0;gap:10px;flex-wrap:wrap}
-.hdr-l{display:flex;align-items:center;gap:10px;min-width:0}
+.hdr-l{display:flex;align-items:center;gap:10px}
 .hdr-title{font-size:15px;font-weight:700;white-space:nowrap}
 .hdr-sub{font-size:11px;color:#9CA3AF;display:block;margin-top:1px}
-.hdr-r{display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap}
+.hdr-r{display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0}
 .hdr-stat{font-size:12px;color:#6B7280;white-space:nowrap}
 .vtoggle{display:flex;border:1px solid #E5E7EB;border-radius:8px;overflow:hidden}
 .vbtn{padding:5px 12px;font-size:12px;border:none;background:transparent;cursor:pointer;color:#6B7280;font-family:inherit}
@@ -43,45 +43,85 @@ header{display:flex;align-items:center;justify-content:space-between;padding:10p
 .hdr-add:hover{background:#2563EB}
 .hdr-so{background:transparent;border:1px solid #E5E7EB;border-radius:8px;padding:5px 10px;font-size:12px;color:#6B7280;cursor:pointer;font-family:inherit}
 main{flex:1;overflow:hidden}
-#map-view{height:100%}
-#map{height:100%}
-#list-view{height:100%;overflow-y:auto;padding:20px 20px 48px}
 
-/* ── OVERLAY ───────────────────────────────────── */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:flex;align-items:flex-end;justify-content:center}
+/* ── MAP ──────────────────────────────── */
+#map-view{position:relative;height:100%}
+#map{height:100%}
+#map.pin-mode{cursor:crosshair!important}
+
+/* ── PIN MODE BAR ─────────────────────── */
+#pin-bar{display:none;position:absolute;top:12px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:460px;z-index:1001;background:#fff;border-radius:12px;padding:12px 14px 10px;box-shadow:0 4px 24px rgba(0,0,0,.22)}
+#pin-bar-title{font-size:13px;font-weight:600;color:#111;margin-bottom:8px}
+.pb-search-wrap{position:relative}
+#pin-bar-input{width:100%;padding:9px 11px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px;font-family:inherit;outline:none}
+#pin-bar-input:focus{border-color:#3B82F6;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+#pin-bar-res{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid #E5E7EB;border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.14);z-index:1002;max-height:210px;overflow-y:auto}
+.pb-ri{padding:10px 13px;cursor:pointer;border-bottom:1px solid #F9FAFB;font-size:13px;color:#374151;line-height:1.35}
+.pb-ri:last-child{border-bottom:none}
+.pb-ri:hover{background:#F9FAFB}
+.pb-note{padding:9px 13px;font-size:13px;color:#9CA3AF}
+#pin-bar-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+#pin-bar-hint{font-size:12px;color:#9CA3AF}
+#pin-bar-cancel{background:none;border:none;color:#6B7280;font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline}
+
+/* ── LIST VIEW ────────────────────────── */
+#list-view{height:100%;overflow-y:auto;padding:20px 20px 48px}
+.cg{margin-bottom:28px}
+.cg-hdr{display:flex;align-items:baseline;gap:8px;margin-bottom:9px}
+.cg-name{font-size:15px;font-weight:700}
+.cg-cnt{font-size:12px;color:#9CA3AF}
+.pl-card{background:#fff;border-radius:12px;border:1px solid #E5E7EB;overflow:hidden}
+.pl-row{display:flex;align-items:center;gap:12px;padding:11px 14px;cursor:pointer}
+.pl-row:hover{background:#F9FAFB}
+.pl-row+.pl-row{border-top:1px solid #F3F4F6}
+.pl-ico{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.pl-ph{width:48px;height:48px;border-radius:8px;object-fit:cover;flex-shrink:0}
+.pl-inf{flex:1;min-width:0}
+.pl-n{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-l{font-size:11px;color:#9CA3AF;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-meta{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.pl-tag{font-size:11px;font-weight:500;padding:2px 7px;border-radius:99px}
+.empty{text-align:center;padding:64px 20px}
+.empty-ico{font-size:52px;margin-bottom:14px}
+.empty p{font-size:15px;color:#6B7280}
+
+/* ── OVERLAY ──────────────────────────── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;display:flex;align-items:flex-end;justify-content:center}
 @media(min-width:560px){.overlay{align-items:center}}
 
-/* ── ADD PANEL ─────────────────────────────────── */
-#add-panel{background:#fff;border-radius:16px 16px 0 0;width:100%;max-width:490px;max-height:92vh;overflow-y:auto;display:flex;flex-direction:column}
+/* ── ADD PANEL ────────────────────────── */
+#add-panel{background:#fff;border-radius:16px 16px 0 0;width:100%;max-width:490px;max-height:78vh;overflow-y:auto;display:flex;flex-direction:column}
 @media(min-width:560px){#add-panel{border-radius:16px;max-height:86vh}}
 .ph{display:flex;justify-content:space-between;align-items:center;padding:16px 20px 14px;border-bottom:1px solid #F3F4F6;flex-shrink:0}
 .ph h2{font-size:16px;font-weight:600}
 .ph-close{background:none;border:none;font-size:22px;cursor:pointer;color:#9CA3AF;line-height:1}
-.pb{padding:16px 20px 28px;overflow-y:auto}
+.pb{padding:16px 20px 28px}
 .pfl{display:block;font-size:12px;font-weight:500;color:#374151;margin:14px 0 5px}
-.pfl:first-child,.pfl.first{margin-top:0}
-.pfi,.pfi-ro,select,textarea{width:100%;padding:9px 11px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px;font-family:inherit;outline:none}
-.pfi:focus,select:focus,textarea:focus{border-color:#3B82F6;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
-.pfi-ro{color:#9CA3AF;background:#F9FAFB;cursor:default}
-textarea{resize:vertical}
+.pfl.first{margin-top:0}
+.pfi,.pfi-ro{width:100%;padding:9px 11px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px;font-family:inherit;outline:none}
+.pfi:focus{border-color:#3B82F6;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.pfi-ro{color:#9CA3AF;background:#F9FAFB}
+select{width:100%;padding:9px 11px;border:1px solid #D1D5DB;border-radius:8px;font-size:13px;font-family:inherit;outline:none}
+select:focus{border-color:#3B82F6;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+textarea.pfi{resize:vertical}
 .pf2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.sw{position:relative}
-#ps-res{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid #E5E7EB;border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.12);z-index:100;max-height:230px;overflow-y:auto}
-.sri{padding:10px 13px;cursor:pointer;border-bottom:1px solid #F9FAFB;font-size:13px;color:#374151;line-height:1.4}
-.sri:last-child{border-bottom:none}
-.sri:hover{background:#F9FAFB}
-.sr-note{padding:10px 13px;font-size:13px;color:#9CA3AF}
-#ps-det{margin-top:16px}
+.photo-drop{display:block;border:2px dashed #E5E7EB;border-radius:8px;padding:14px;text-align:center;cursor:pointer;color:#9CA3AF;font-size:13px;transition:border-color .15s}
+.photo-drop:hover{border-color:#3B82F6;color:#3B82F6}
+#photo-prev-wrap{margin-top:8px}
+#photo-prev{width:100%;max-height:160px;object-fit:cover;border-radius:8px;display:block}
+.rm-photo{font-size:12px;color:#EF4444;background:none;border:none;cursor:pointer;font-family:inherit;margin-top:6px;padding:0}
 .save-btn{display:block;width:100%;margin-top:18px;padding:11px;background:#111;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
 .save-btn:hover{background:#333}
 .save-btn:disabled{opacity:.5;cursor:not-allowed}
 
-/* ── DETAIL MODAL ──────────────────────────────── */
+/* ── DETAIL MODAL ─────────────────────── */
 #det-modal{background:#fff;border-radius:16px 16px 0 0;width:100%;max-width:440px;max-height:90vh;overflow-y:auto}
 @media(min-width:560px){#det-modal{border-radius:16px}}
-.dmh{height:88px;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;border-radius:16px 16px 0 0}
+.dmh{display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;border-radius:16px 16px 0 0;overflow:hidden}
+.dmh-icon-wrap{height:88px;display:flex;align-items:center;justify-content:center;width:100%}
+.dmh-photo{width:100%;height:180px;object-fit:cover;display:block}
 .dmh-icon{font-size:40px}
-.dmh-close{position:absolute;top:10px;right:12px;background:rgba(0,0,0,.18);border:none;border-radius:50%;width:28px;height:28px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;line-height:1}
+.dmh-close{position:absolute;top:10px;right:12px;background:rgba(0,0,0,.25);border:none;border-radius:50%;width:28px;height:28px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;line-height:1;z-index:1}
 .dmb{padding:16px 20px 24px}
 .dm-name{font-size:20px;font-weight:700;margin-bottom:3px}
 .dm-loc{font-size:13px;color:#6B7280;margin-bottom:12px}
@@ -97,28 +137,11 @@ textarea{resize:vertical}
 .btn-del{padding:10px 14px;border-radius:9px;border:1.5px solid #FECACA;background:transparent;color:#EF4444;font-size:13px;cursor:pointer;font-family:inherit}
 .btn-del:hover{background:#FEF2F2}
 
-/* ── LIST VIEW ─────────────────────────────────── */
-.cg{margin-bottom:28px}
-.cg-hdr{display:flex;align-items:baseline;gap:8px;margin-bottom:9px}
-.cg-name{font-size:15px;font-weight:700}
-.cg-cnt{font-size:12px;color:#9CA3AF}
-.pl-card{background:#fff;border-radius:12px;border:1px solid #E5E7EB;overflow:hidden}
-.pl-row{display:flex;align-items:center;gap:12px;padding:11px 14px;cursor:pointer}
-.pl-row:hover{background:#F9FAFB}
-.pl-row+.pl-row{border-top:1px solid #F3F4F6}
-.pl-ico{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.pl-inf{flex:1;min-width:0}
-.pl-n{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pl-l{font-size:11px;color:#9CA3AF;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pl-meta{display:flex;align-items:center;gap:5px;flex-shrink:0}
-.pl-tag{font-size:11px;font-weight:500;padding:2px 7px;border-radius:99px}
-.empty{text-align:center;padding:64px 20px;color:#9CA3AF}
-.empty-ico{font-size:52px;margin-bottom:14px}
-.empty p{font-size:15px;color:#6B7280}
-
-/* ── LEAFLET POPUP ─────────────────────────────── */
-.leaflet-popup-content-wrapper{border-radius:12px!important;box-shadow:0 4px 24px rgba(0,0,0,.15)!important}
-.leaflet-popup-content{margin:11px 14px 13px!important}
+/* ── LEAFLET POPUP ────────────────────── */
+.leaflet-popup-content-wrapper{border-radius:12px!important;box-shadow:0 4px 24px rgba(0,0,0,.15)!important;padding:0!important;overflow:hidden}
+.leaflet-popup-content{margin:0!important;width:220px!important}
+.lp-photo{width:100%;height:90px;object-fit:cover;display:block}
+.lp-inner{padding:10px 13px 12px}
 .lp-tags{display:flex;gap:5px;margin-bottom:7px;flex-wrap:wrap}
 .lp-tag{font-size:11px;font-weight:600;padding:2px 7px;border-radius:99px}
 .lp-name{font-weight:700;font-size:14px;color:#111;margin:0 0 2px}
@@ -129,15 +152,12 @@ textarea{resize:vertical}
 </head>
 <body>
 
-<!-- ════════════ AUTH ════════════ -->
+<!-- ══════ AUTH ══════ -->
 <div id="auth-screen">
   <div class="auth-card">
     <div class="auth-brand">
       <div class="auth-brand-icon">✈️</div>
-      <div>
-        <h1>Travel List</h1>
-        <p>Chris &amp; Melissa</p>
-      </div>
+      <div><h1>Monstacation</h1><p>Chris &amp; Melissa</p></div>
     </div>
     <div class="tab-row">
       <button class="tab on" id="tab-in" onclick="setAM('in')">Sign in</button>
@@ -160,13 +180,13 @@ textarea{resize:vertical}
   </div>
 </div>
 
-<!-- ════════════ APP ════════════ -->
+<!-- ══════ APP ══════ -->
 <div id="app-screen">
   <header>
     <div class="hdr-l">
       <span style="font-size:20px">✈️</span>
       <div>
-        <span class="hdr-title">Chris &amp; Melissa's Travel List</span>
+        <span class="hdr-title">Monstacation</span>
         <span class="hdr-sub" id="hdr-sub"></span>
       </div>
     </div>
@@ -180,60 +200,77 @@ textarea{resize:vertical}
       <button class="hdr-so" onclick="doSignOut()">Sign out</button>
     </div>
   </header>
+
   <main>
-    <div id="map-view"><div id="map"></div></div>
+    <div id="map-view">
+      <div id="map"></div>
+      <!-- Pin mode search bar -->
+      <div id="pin-bar">
+        <div id="pin-bar-title">📍 Search for an address or place name</div>
+        <div class="pb-search-wrap">
+          <input id="pin-bar-input" type="text" placeholder="e.g. 1234 Main St, Austin TX  or  Snow's BBQ Lexington" autocomplete="off" oninput="onPinSearch()">
+          <div id="pin-bar-res"></div>
+        </div>
+        <div id="pin-bar-footer">
+          <span id="pin-bar-hint">or click anywhere on the map to drop a pin</span>
+          <button id="pin-bar-cancel" onclick="cancelAll()">Cancel</button>
+        </div>
+      </div>
+    </div>
     <div id="list-view" style="display:none"><div id="list-cnt"></div></div>
   </main>
 
-  <!-- ADD OVERLAY -->
-  <div class="overlay" id="add-ov" style="display:none" onclick="if(event.target===this)closeAdd()">
+  <!-- ADD FORM OVERLAY -->
+  <div class="overlay" id="add-ov" style="display:none" onclick="if(event.target===this)cancelAll()">
     <div id="add-panel">
       <div class="ph">
-        <h2>Add a destination</h2>
-        <button class="ph-close" onclick="closeAdd()">×</button>
+        <h2 id="add-panel-title">Add a destination</h2>
+        <button class="ph-close" onclick="cancelAll()">×</button>
       </div>
       <div class="pb">
-        <label class="pfl first">Search for a place</label>
-        <div class="sw">
-          <input class="pfi" type="text" id="ps-in" placeholder="Restaurant name, city, landmark…" autocomplete="off" oninput="onSrch()">
-          <div id="ps-res"></div>
-        </div>
-        <div id="ps-det" style="display:none">
-          <label class="pfl">Name <span style="font-size:11px;color:#9CA3AF">(edit if needed)</span></label>
-          <input class="pfi" type="text" id="pd-name" placeholder="Place name">
-          <label class="pfl">Location</label>
-          <input class="pfi-ro" type="text" id="pd-loc" readonly>
-          <div class="pf2" style="margin-top:14px">
-            <div>
-              <label class="pfl" style="margin-top:0">Category</label>
-              <select id="pd-cat">
-                <option value="restaurant">🍽️ Restaurant</option>
-                <option value="city">🏙️ City / Neighbourhood</option>
-                <option value="attraction">🎡 Attraction</option>
-                <option value="beach">🏖️ Beach</option>
-                <option value="mountains">⛰️ Mountains</option>
-                <option value="cultural">🏛️ Cultural / Museum</option>
-                <option value="nature">🌿 Nature / Park</option>
-                <option value="adventure">🧭 Adventure</option>
-                <option value="shopping">🛍️ Shopping</option>
-                <option value="other">📍 Other</option>
-              </select>
-            </div>
-            <div>
-              <label class="pfl" style="margin-top:0">Priority</label>
-              <select id="pd-pri">
-                <option value="dream">🌟 Dream trip</option>
-                <option value="someday" selected>☁️ Someday</option>
-                <option value="soon">🚀 Planning soon</option>
-              </select>
-            </div>
+        <label class="pfl first">Name *</label>
+        <input class="pfi" type="text" id="pd-name" placeholder="What do you call this place?">
+        <label class="pfl">Location</label>
+        <input class="pfi-ro" type="text" id="pd-loc" readonly>
+        <div class="pf2" style="margin-top:14px">
+          <div>
+            <label class="pfl" style="margin-top:0">Category</label>
+            <select id="pd-cat">
+              <option value="restaurant">🍽️ Restaurant</option>
+              <option value="city">🏙️ City / Area</option>
+              <option value="attraction">🎡 Attraction</option>
+              <option value="beach">🏖️ Beach</option>
+              <option value="mountains">⛰️ Mountains</option>
+              <option value="cultural">🏛️ Cultural / Museum</option>
+              <option value="nature">🌿 Nature / Park</option>
+              <option value="adventure">🧭 Adventure</option>
+              <option value="shopping">🛍️ Shopping</option>
+              <option value="other">📍 Other</option>
+            </select>
           </div>
-          <label class="pfl">Website <span style="font-size:11px;color:#9CA3AF">(optional)</span></label>
-          <input class="pfi" type="url" id="pd-web" placeholder="https://…">
-          <label class="pfl">Notes <span style="font-size:11px;color:#9CA3AF">(optional)</span></label>
-          <textarea class="pfi" id="pd-notes" rows="3" placeholder="Why go? Best dish to order? Best time of year?"></textarea>
-          <button class="save-btn" id="save-btn" onclick="savePlace()">Add to list</button>
+          <div>
+            <label class="pfl" style="margin-top:0">Priority</label>
+            <select id="pd-pri">
+              <option value="dream">🌟 Dream trip</option>
+              <option value="someday" selected>☁️ Someday</option>
+              <option value="soon">🚀 Planning soon</option>
+            </select>
+          </div>
         </div>
+        <label class="pfl">Website <span style="font-size:11px;color:#9CA3AF">(optional)</span></label>
+        <input class="pfi" type="url" id="pd-web" placeholder="https://…">
+        <label class="pfl">Photo <span style="font-size:11px;color:#9CA3AF">(optional)</span></label>
+        <label class="photo-drop" id="photo-drop">
+          📷 Click to add a photo
+          <input type="file" id="pd-photo" accept="image/*" style="display:none" onchange="onPhotoChange()">
+        </label>
+        <div id="photo-prev-wrap" style="display:none">
+          <img id="photo-prev" alt="Photo preview">
+          <button class="rm-photo" onclick="clearPhoto()">✕ Remove photo</button>
+        </div>
+        <label class="pfl">Notes <span style="font-size:11px;color:#9CA3AF">(optional)</span></label>
+        <textarea class="pfi" id="pd-notes" rows="3" placeholder="Best dish to order? Best time to visit? Why you want to go?"></textarea>
+        <button class="save-btn" id="save-btn" onclick="savePlace()">Add to list</button>
       </div>
     </div>
   </div>
@@ -241,10 +278,7 @@ textarea{resize:vertical}
   <!-- DETAIL OVERLAY -->
   <div class="overlay" id="det-ov" style="display:none" onclick="if(event.target===this)closeDet()">
     <div id="det-modal">
-      <div class="dmh" id="dmh">
-        <span class="dmh-icon" id="dmh-icon"></span>
-        <button class="dmh-close" onclick="closeDet()">×</button>
-      </div>
+      <div class="dmh" id="dmh"></div>
       <div class="dmb" id="dmb"></div>
     </div>
   </div>
@@ -253,27 +287,26 @@ textarea{resize:vertical}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
-// ╔═══════════════════════════════════════════════╗
-// ║  CONFIGURATION — edit these two lines         ║
-// ╚═══════════════════════════════════════════════╝
-const SB_URL = 'https://bpysjunhixtvsizfevpw.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJweXNqdW5oaXh0dnNpemZldnB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0MjAzNTksImV4cCI6MjA5Nzk5NjM1OX0.jytaRMM2Yb0lGAOKEjPvKqR-P_WlHL1drZEAXRjEtmM';
-// ╚═══════════════════════════════════════════════╝
+// ╔═══════════════════════════════════╗
+// ║  CONFIG — edit these two lines   ║
+// ╚═══════════════════════════════════╝
+const SB_URL = 'YOUR_SUPABASE_URL';
+const SB_KEY = 'YOUR_SUPABASE_ANON_KEY';
 
 if (SB_URL === 'YOUR_SUPABASE_URL') {
-  document.body.innerHTML = '<div style="font-family:sans-serif;padding:48px;max-width:520px;margin:0 auto"><h2 style="margin-bottom:12px">⚙️ Setup required</h2><p style="color:#6B7280;line-height:1.7">Open <strong>index.html</strong> in any text editor and replace <code style="background:#F3F4F6;padding:1px 5px;border-radius:4px">YOUR_SUPABASE_URL</code> and <code style="background:#F3F4F6;padding:1px 5px;border-radius:4px">YOUR_SUPABASE_ANON_KEY</code> with your actual Supabase project values. See the setup guide for step-by-step instructions.</p></div>';
+  document.body.innerHTML = '<div style="font-family:sans-serif;padding:48px;max-width:500px;margin:0 auto"><h2 style="margin-bottom:12px">⚙️ Setup required</h2><p style="color:#6B7280;line-height:1.7">Open <strong>index.html</strong> in a text editor and replace <code style="background:#F3F4F6;padding:1px 5px;border-radius:4px">YOUR_SUPABASE_URL</code> and <code style="background:#F3F4F6;padding:1px 5px;border-radius:4px">YOUR_SUPABASE_ANON_KEY</code> with your Supabase project values.</p></div>';
 }
 
 const sb = supabase.createClient(SB_URL, SB_KEY);
 
 const CATS = {
   restaurant:{ label:'Restaurant',      icon:'🍽️', color:'#D97706', bg:'#FFFBEB' },
-  city:      { label:'City',            icon:'🏙️', color:'#3B82F6', bg:'#EFF6FF' },
+  city:      { label:'City / Area',     icon:'🏙️', color:'#3B82F6', bg:'#EFF6FF' },
   attraction:{ label:'Attraction',      icon:'🎡', color:'#EC4899', bg:'#FDF2F8' },
   beach:     { label:'Beach',           icon:'🏖️', color:'#0EA5E9', bg:'#F0F9FF' },
   mountains: { label:'Mountains',       icon:'⛰️', color:'#78716C', bg:'#FAFAF9' },
   cultural:  { label:'Cultural',        icon:'🏛️', color:'#8B5CF6', bg:'#F5F3FF' },
-  nature:    { label:'Nature',          icon:'🌿', color:'#10B981', bg:'#ECFDF5' },
+  nature:    { label:'Nature / Park',   icon:'🌿', color:'#10B981', bg:'#ECFDF5' },
   adventure: { label:'Adventure',       icon:'🧭', color:'#EF4444', bg:'#FEF2F2' },
   shopping:  { label:'Shopping',        icon:'🛍️', color:'#F59E0B', bg:'#FFFBEB' },
   other:     { label:'Other',           icon:'📍', color:'#6B7280', bg:'#F9FAFB' },
@@ -284,10 +317,16 @@ const PRIS = {
   soon:    { label:'Planning soon', color:'#10B981', bg:'#ECFDF5' },
 };
 
-let map, places=[], user=null, srTimer=null, pendingGeo=null, srData=[];
+let map, places=[], user=null, pinMode=false, draftMarker=null;
+let pbTimer=null, pbData=[], pendingGeo=null;
 const markers={};
 
-// ── AUTH ──────────────────────────────────────────
+const draftIcon = L.divIcon({
+  className:'', iconSize:[18,18], iconAnchor:[9,9],
+  html:`<div style="width:18px;height:18px;background:#6B7280;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 10px rgba(0,0,0,.35)"></div>`
+});
+
+// ── AUTH ────────────────────────────────────
 let am='in';
 function setAM(m){
   am=m;
@@ -295,17 +334,17 @@ function setAM(m){
   document.getElementById('tab-up').classList.toggle('on',m==='up');
   document.getElementById('a-btn').textContent=m==='in'?'Sign in':'Create account';
   document.getElementById('name-f').style.display=m==='up'?'block':'none';
-  msg('','');
+  amsg('');
 }
-function msg(t,c){const e=document.getElementById('a-msg');e.textContent=t;e.style.color=c||'#EF4444';}
+function amsg(t,c){const e=document.getElementById('a-msg');e.textContent=t;e.style.color=c||'#EF4444';}
 async function doAuth(){
   const email=document.getElementById('a-email').value.trim();
   const pwd=document.getElementById('a-pwd').value;
   const name=document.getElementById('a-name').value.trim();
-  if(!email||!pwd){msg('Email and password are required.');return;}
-  if(am==='up'&&!name){msg('Enter your name.');return;}
+  if(!email||!pwd){amsg('Email and password are required.');return;}
+  if(am==='up'&&!name){amsg('Enter your name.');return;}
   const btn=document.getElementById('a-btn');
-  btn.disabled=true;btn.textContent='…';msg('');
+  btn.disabled=true;btn.textContent='…';amsg('');
   let res;
   if(am==='in'){
     res=await sb.auth.signInWithPassword({email,password:pwd});
@@ -313,10 +352,10 @@ async function doAuth(){
     res=await sb.auth.signUp({email,password:pwd,options:{data:{full_name:name}}});
   }
   if(res.error){
-    msg(res.error.message);
+    amsg(res.error.message);
     btn.disabled=false;btn.textContent=am==='in'?'Sign in':'Create account';
   }else if(am==='up'&&!res.data.session){
-    msg('Check your email to confirm your account, then sign in here.','#10B981');
+    amsg('Check your email to confirm your account, then sign in.','#10B981');
     btn.disabled=false;btn.textContent='Create account';
   }else{
     user=res.data.user;showApp();
@@ -328,7 +367,7 @@ async function doSignOut(){
   document.getElementById('auth-screen').style.display='flex';
 }
 
-// ── INIT ──────────────────────────────────────────
+// ── INIT ────────────────────────────────────
 async function init(){
   const{data:{session}}=await sb.auth.getSession();
   if(session?.user){user=session.user;showApp();}
@@ -341,7 +380,7 @@ async function showApp(){
   initMap();await loadPlaces();
 }
 
-// ── MAP ───────────────────────────────────────────
+// ── MAP ─────────────────────────────────────
 function initMap(){
   if(map)return;
   map=L.map('map',{zoomControl:true}).setView([25,10],2);
@@ -349,6 +388,10 @@ function initMap(){
     attribution:'© <a href="https://openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
     maxZoom:19
   }).addTo(map);
+  map.on('click',function(e){
+    if(!pinMode)return;
+    placeDraftPin(e.latlng.lat,e.latlng.lng,null);
+  });
 }
 function pinIcon(color){
   return L.divIcon({
@@ -360,26 +403,30 @@ function mkMarker(p){
   const cat=CATS[p.category]||CATS.other;
   const pri=PRIS[p.priority]||PRIS.someday;
   const color=p.visited?'#10B981':cat.color;
+  const photoHtml=p.photo_url
+    ?`<img class="lp-photo" src="${esc(p.photo_url)}" alt="">`
+    :`<div style="height:6px;background:${cat.bg}"></div>`;
   const m=L.marker([p.lat,p.lng],{icon:pinIcon(color)});
   m.bindPopup(
-    `<div style="min-width:185px">`+
+    photoHtml+
+    `<div class="lp-inner">`+
     `<div class="lp-tags">`+
     `<span class="lp-tag" style="color:${cat.color};background:${cat.bg}">${cat.icon} ${cat.label}</span>`+
     `<span class="lp-tag" style="color:${pri.color};background:${pri.bg}">${pri.label}</span>`+
-    (p.visited?`<span class="lp-tag" style="color:#10B981;background:#ECFDF5">✓ Visited</span>`:'')+
+    (p.visited?`<span class="lp-tag" style="color:#10B981;background:#ECFDF5">✓</span>`:'')+
     `</div>`+
     `<p class="lp-name">${esc(p.name)}</p>`+
     `<p class="lp-loc">${esc(p.location||'')}</p>`+
     `<button class="lp-btn" onclick="openDet('${p.id}')">View details →</button>`+
     `</div>`,
-    {maxWidth:250}
+    {maxWidth:240}
   ).addTo(map);
   markers[p.id]=m;
 }
 function rmMarker(id){if(markers[id]){markers[id].remove();delete markers[id];}}
 function refreshMarker(p){rmMarker(p.id);if(p.lat&&p.lng)mkMarker(p);}
 
-// ── PLACES ────────────────────────────────────────
+// ── PLACES ──────────────────────────────────
 async function loadPlaces(){
   const{data,error}=await sb.from('places').select('*').order('created_at',{ascending:false});
   if(error){console.error(error);return;}
@@ -390,40 +437,55 @@ async function loadPlaces(){
   updateStat();
   if(document.getElementById('list-view').style.display!=='none')renderList();
 }
+async function uploadPhoto(file){
+  const ext=(file.name.split('.').pop()||'jpg').toLowerCase();
+  const path=`${user.id}/${Date.now()}.${ext}`;
+  const{error}=await sb.storage.from('place-photos').upload(path,file,{contentType:file.type});
+  if(error)throw error;
+  const{data:{publicUrl}}=sb.storage.from('place-photos').getPublicUrl(path);
+  return publicUrl;
+}
 async function savePlace(){
   if(!pendingGeo)return;
   const name=document.getElementById('pd-name').value.trim();
   if(!name){document.getElementById('pd-name').focus();return;}
   const btn=document.getElementById('save-btn');
   btn.disabled=true;btn.textContent='Saving…';
+  let photoUrl=null;
+  const photoFile=document.getElementById('pd-photo').files[0];
+  if(photoFile){
+    btn.textContent='Uploading photo…';
+    try{photoUrl=await uploadPhoto(photoFile);}
+    catch(e){console.warn('Photo upload failed',e);}
+  }
+  btn.textContent='Saving…';
   const web=document.getElementById('pd-web').value.trim();
   const{data,error}=await sb.from('places').insert({
-    name,
-    location:pendingGeo.display,
-    country:pendingGeo.country,
-    lat:pendingGeo.lat,
-    lng:pendingGeo.lng,
+    name,location:pendingGeo.display,country:pendingGeo.country,
+    lat:pendingGeo.lat,lng:pendingGeo.lng,
     category:document.getElementById('pd-cat').value,
     priority:document.getElementById('pd-pri').value,
     website:(web&&(web.startsWith('http://')||web.startsWith('https://')))?web:null,
     notes:document.getElementById('pd-notes').value.trim()||null,
-    user_id:user.id,
+    photo_url:photoUrl,user_id:user.id,
     added_by:user.user_metadata?.full_name||user.email.split('@')[0],
   }).select().single();
   btn.disabled=false;btn.textContent='Add to list';
   if(error){alert('Save failed: '+error.message);return;}
-  places.unshift(data);mkMarker(data);updateStat();closeAdd();
+  places.unshift(data);
+  if(draftMarker){draftMarker.remove();draftMarker=null;}
+  mkMarker(data);updateStat();
+  document.getElementById('add-ov').style.display='none';
+  exitPinMode();
   if(data.lat&&data.lng){
     setView('map');
-    setTimeout(()=>{map.setView([data.lat,data.lng],12);markers[data.id]?.openPopup();},100);
+    setTimeout(()=>{map.setView([data.lat,data.lng],14);markers[data.id]?.openPopup();},100);
   }
 }
 async function toggleVisited(id){
   const p=places.find(x=>x.id===id);if(!p)return;
   const nv=!p.visited;
-  const{data,error}=await sb.from('places').update({
-    visited:nv,visited_at:nv?new Date().toISOString():null
-  }).eq('id',id).select().single();
+  const{data,error}=await sb.from('places').update({visited:nv,visited_at:nv?new Date().toISOString():null}).eq('id',id).select().single();
   if(error){console.error(error);return;}
   const i=places.findIndex(x=>x.id===id);places[i]=data;
   refreshMarker(data);updateStat();
@@ -431,7 +493,7 @@ async function toggleVisited(id){
   openDet(id);
 }
 async function deletePlace(id){
-  if(!confirm('Remove this place from the list?'))return;
+  if(!confirm('Remove this place from Monstacation?'))return;
   const{error}=await sb.from('places').delete().eq('id',id);
   if(error){console.error(error);return;}
   rmMarker(id);places=places.filter(x=>x.id!==id);
@@ -439,62 +501,129 @@ async function deletePlace(id){
   if(document.getElementById('list-view').style.display!=='none')renderList();
 }
 
-// ── GEOCODE ───────────────────────────────────────
-function onSrch(){
-  clearTimeout(srTimer);
-  const q=document.getElementById('ps-in').value.trim();
-  document.getElementById('ps-res').innerHTML='';
-  document.getElementById('ps-det').style.display='none';
-  pendingGeo=null;
-  if(q.length<3)return;
-  srTimer=setTimeout(()=>doSrch(q),450);
+// ── PIN MODE ────────────────────────────────
+function openAdd(){
+  pinMode=true;
+  document.getElementById('map').classList.add('pin-mode');
+  document.getElementById('pin-bar').style.display='block';
+  document.getElementById('pin-bar-input').value='';
+  document.getElementById('pin-bar-res').innerHTML='';
+  setView('map');
+  setTimeout(()=>document.getElementById('pin-bar-input').focus(),80);
 }
-async function doSrch(q){
-  const res=document.getElementById('ps-res');
-  res.innerHTML='<div class="sr-note">Searching…</div>';
+function exitPinMode(){
+  pinMode=false;
+  document.getElementById('map').classList.remove('pin-mode');
+  document.getElementById('pin-bar').style.display='none';
+  document.getElementById('pin-bar-res').innerHTML='';
+}
+function cancelAll(){
+  exitPinMode();
+  document.getElementById('add-ov').style.display='none';
+  if(draftMarker){draftMarker.remove();draftMarker=null;}
+  pendingGeo=null;
+}
+
+// Pin bar search
+function onPinSearch(){
+  clearTimeout(pbTimer);
+  const q=document.getElementById('pin-bar-input').value.trim();
+  document.getElementById('pin-bar-res').innerHTML='';
+  if(q.length<3)return;
+  pbTimer=setTimeout(()=>doPinSearch(q),450);
+}
+async function doPinSearch(q){
+  const res=document.getElementById('pin-bar-res');
+  res.innerHTML='<div class="pb-note">Searching…</div>';
   try{
     const r=await fetch(
       `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=6&addressdetails=1`,
       {headers:{'Accept-Language':'en'}}
     );
-    srData=await r.json();
-    if(!srData.length){res.innerHTML='<div class="sr-note">No results — try different spelling or add city name</div>';return;}
-    res.innerHTML=srData.map((d,i)=>{
+    pbData=await r.json();
+    if(!pbData.length){res.innerHTML='<div class="pb-note">No results — try including the city or state</div>';return;}
+    res.innerHTML=pbData.map((d,i)=>{
       const parts=d.display_name.split(',').map(s=>s.trim());
       const short=parts.slice(0,Math.min(5,parts.length)).join(', ');
-      return`<div class="sri" onclick="pickR(${i})">${esc(short)}</div>`;
+      return`<div class="pb-ri" onclick="pickPinR(${i})">${esc(short)}</div>`;
     }).join('');
-  }catch(e){res.innerHTML='<div class="sr-note">Search failed — check your connection</div>';}
+  }catch(e){res.innerHTML='<div class="pb-note">Search failed — check your connection</div>';}
 }
-function pickR(i){
-  const d=srData[i];
-  const parts=d.display_name.split(',').map(s=>s.trim());
-  const locParts=parts.length>3?parts.slice(-3):parts;
-  const display=locParts.join(', ');
-  pendingGeo={lat:parseFloat(d.lat),lng:parseFloat(d.lon),display,country:d.address?.country||parts[parts.length-1]};
-  document.getElementById('pd-name').value=parts[0]||'';
+function pickPinR(i){
+  const d=pbData[i];
+  document.getElementById('pin-bar-res').innerHTML='';
+  placeDraftPin(parseFloat(d.lat),parseFloat(d.lon),d);
+}
+async function placeDraftPin(lat,lng,nomData){
+  if(draftMarker){draftMarker.remove();draftMarker=null;}
+  draftMarker=L.marker([lat,lng],{icon:draftIcon}).addTo(map);
+  map.setView([lat,lng],Math.max(map.getZoom(),13));
+  let display,country;
+  if(nomData){
+    const parts=nomData.display_name.split(',').map(s=>s.trim());
+    display=parts.slice(Math.max(0,parts.length-3)).join(', ');
+    country=nomData.address?.country||parts[parts.length-1];
+  }else{
+    document.getElementById('pin-bar-hint').textContent='Finding address…';
+    try{
+      const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,{headers:{'Accept-Language':'en'}});
+      const d=await r.json();
+      const parts=(d.display_name||'').split(',').map(s=>s.trim());
+      display=parts.slice(Math.max(0,parts.length-3)).join(', ');
+      country=d.address?.country||'';
+    }catch(e){
+      display=`${lat.toFixed(4)}°, ${lng.toFixed(4)}°`;
+      country='';
+    }
+    document.getElementById('pin-bar-hint').textContent='or click anywhere on the map to drop a pin';
+  }
+  pendingGeo={lat,lng,display,country};
+  document.getElementById('pd-name').value='';
   document.getElementById('pd-loc').value=display;
-  document.getElementById('pd-cat').value='other';
+  document.getElementById('pd-cat').value='restaurant';
   document.getElementById('pd-pri').value='someday';
   document.getElementById('pd-web').value='';
   document.getElementById('pd-notes').value='';
-  document.getElementById('ps-res').innerHTML='';
-  document.getElementById('ps-det').style.display='block';
-  setTimeout(()=>document.getElementById('pd-name').focus(),50);
+  document.getElementById('pd-photo').value='';
+  document.getElementById('photo-prev-wrap').style.display='none';
+  document.getElementById('pin-bar').style.display='none';
+  document.getElementById('add-ov').style.display='flex';
+  setTimeout(()=>document.getElementById('pd-name').focus(),80);
 }
 
-// ── DETAIL ────────────────────────────────────────
+// ── PHOTO ───────────────────────────────────
+function onPhotoChange(){
+  const file=document.getElementById('pd-photo').files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    document.getElementById('photo-prev').src=e.target.result;
+    document.getElementById('photo-prev-wrap').style.display='block';
+  };
+  reader.readAsDataURL(file);
+}
+function clearPhoto(){
+  document.getElementById('pd-photo').value='';
+  document.getElementById('photo-prev-wrap').style.display='none';
+}
+
+// ── DETAIL ──────────────────────────────────
 function openDet(id){
   const p=places.find(x=>x.id===id);if(!p)return;
   map?.closePopup();
   const cat=CATS[p.category]||CATS.other;
   const pri=PRIS[p.priority]||PRIS.someday;
-  document.getElementById('dmh').style.background=cat.bg;
-  document.getElementById('dmh-icon').textContent=cat.icon;
+  const dmh=document.getElementById('dmh');
+  if(p.photo_url){
+    dmh.style.background='none';
+    dmh.innerHTML=`<img class="dmh-photo" src="${esc(p.photo_url)}" alt="${esc(p.name)}"><button class="dmh-close" onclick="closeDet()">×</button>`;
+  }else{
+    dmh.style.background=cat.bg;
+    dmh.innerHTML=`<div class="dmh-icon-wrap"><span class="dmh-icon">${cat.icon}</span></div><button class="dmh-close" onclick="closeDet()">×</button>`;
+  }
   const vis=p.visited?(p.visited_at?`Visited ${new Date(p.visited_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}`:' Visited'):null;
   const web=p.website&&(p.website.startsWith('http://')||p.website.startsWith('https://'))
-    ?`<a class="dm-web" href="${esc(p.website)}" target="_blank" rel="noopener noreferrer">🔗 ${esc(p.website.replace(/^https?:\/\/(www\.)?/,'').split('/')[0])}</a>`
-    :'';
+    ?`<a class="dm-web" href="${esc(p.website)}" target="_blank" rel="noopener noreferrer">🔗 ${esc(p.website.replace(/^https?:\/\/(www\.)?/,'').split('/')[0])}</a>`:'';
   document.getElementById('dmb').innerHTML=
     `<p class="dm-name" style="color:${p.visited?'#10B981':'#111'}">${esc(p.name)}</p>`+
     `<p class="dm-loc">${esc(p.location||'')}</p>`+
@@ -508,15 +637,14 @@ function openDet(id){
     (p.notes?`<div class="dm-notes">${esc(p.notes)}</div>`:'')+
     `<div class="dm-acts">`+
     `<button class="btn-vis${p.visited?' been':''}" onclick="toggleVisited('${p.id}')">`+
-    (p.visited?'✓ Been here!':'📍 Mark as visited')+
-    `</button>`+
+    (p.visited?'✓ Been here!':'📍 Mark as visited')+`</button>`+
     `<button class="btn-del" onclick="deletePlace('${p.id}')">🗑</button>`+
     `</div>`;
   document.getElementById('det-ov').style.display='flex';
 }
 function closeDet(){document.getElementById('det-ov').style.display='none';}
 
-// ── LIST ──────────────────────────────────────────
+// ── LIST ────────────────────────────────────
 function renderList(){
   const byC={};
   places.forEach(p=>{const k=p.country||'Unknown';if(!byC[k])byC[k]=[];byC[k].push(p);});
@@ -533,8 +661,11 @@ function renderList(){
     cP.map(p=>{
       const cat=CATS[p.category]||CATS.other;
       const pri=PRIS[p.priority]||PRIS.someday;
+      const thumb=p.photo_url
+        ?`<img class="pl-ph" src="${esc(p.photo_url)}" alt="">`
+        :`<div class="pl-ico" style="background:${cat.bg}">${cat.icon}</div>`;
       return`<div class="pl-row" onclick="openDet('${p.id}')">`+
-        `<div class="pl-ico" style="background:${cat.bg}">${cat.icon}</div>`+
+        thumb+
         `<div class="pl-inf">`+
         `<p class="pl-n" style="color:${p.visited?'#10B981':'#111'}">${esc(p.name)}</p>`+
         `<p class="pl-l">${esc(p.location||'')}</p>`+
@@ -548,18 +679,7 @@ function renderList(){
   ).join('');
 }
 
-// ── ADD PANEL ─────────────────────────────────────
-function openAdd(){
-  pendingGeo=null;srData=[];
-  document.getElementById('ps-in').value='';
-  document.getElementById('ps-res').innerHTML='';
-  document.getElementById('ps-det').style.display='none';
-  document.getElementById('add-ov').style.display='flex';
-  setTimeout(()=>document.getElementById('ps-in').focus(),80);
-}
-function closeAdd(){document.getElementById('add-ov').style.display='none';}
-
-// ── VIEW ──────────────────────────────────────────
+// ── VIEW / UTILS ────────────────────────────
 function setView(v){
   document.getElementById('vbtn-map').classList.toggle('on',v==='map');
   document.getElementById('vbtn-list').classList.toggle('on',v==='list');
@@ -568,8 +688,6 @@ function setView(v){
   if(v==='list')renderList();
   if(v==='map')setTimeout(()=>map?.invalidateSize(),50);
 }
-
-// ── UTILS ─────────────────────────────────────────
 function updateStat(){
   const w=places.filter(p=>!p.visited).length,v=places.filter(p=>p.visited).length;
   document.getElementById('hdr-stat').textContent=`${w} to visit · ${v} visited`;
