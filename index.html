@@ -383,7 +383,7 @@ async function showApp(){
 // ── MAP ─────────────────────────────────────
 function initMap(){
   if(map)return;
-  map=L.map('map',{zoomControl:true}).setView([25,10],2);
+  map = L.map('map', { zoomControl: true, worldCopyJump: true }).setView([25, 10], 2);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
     attribution:'© <a href="https://openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
     maxZoom:19
